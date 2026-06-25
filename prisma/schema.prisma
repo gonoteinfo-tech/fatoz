@@ -1,0 +1,87 @@
+generator client {
+  provider      = "prisma-client-js"
+  // Inclui os engines do Linux (Hostinger usa CloudLinux/RHEL) além do nativo,
+  // para o app funcionar mesmo se o build for feito em outro sistema.
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Feeds RSS monitorados
+model Feed {
+  id           String    @id @default(cuid())
+  title        String
+  url          String    @unique
+  category     String    @default("Geral")
+  active       Boolean   @default(true)
+  autoPublish  Boolean   @default(false) // publica automaticamente após reescrever
+  lastFetched  DateTime?
+  createdAt    DateTime  @default(now())
+  articles     Article[]
+}
+
+// Artigos: importados do RSS e reescritos pela IA
+model Article {
+  id            String   @id @default(cuid())
+  feedId        String?
+  feed          Feed?    @relation(fields: [feedId], references: [id], onDelete: SetNull)
+
+  // Conteúdo original
+  sourceUrl     String?  @unique
+  sourceTitle   String?
+  sourceContent String?
+
+  // Conteúdo reescrito pela IA
+  title         String
+  slug          String   @unique
+  excerpt       String   @default("")
+  content       String   @default("")
+  imageUrl      String?
+  category      String   @default("Geral")
+  tags          String   @default("") // separadas por vírgula
+
+  // SEO
+  metaTitle       String @default("")
+  metaDescription String @default("")
+  keywords        String @default("")
+
+  // Estado: PENDING | REWRITING | DRAFT | PUBLISHED | ERROR
+  status        String   @default("PENDING")
+  errorMessage  String?
+  aiProvider    String?
+  views         Int      @default(0)
+
+  // Integração WordPress
+  wpPostId      Int?
+  wpUrl         String?
+
+  publishedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+}
+
+// Configurações da plataforma (chave/valor) — chaves de API, provedor de IA, etc.
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// Log de execuções do pipeline de automação
+model RunLog {
+  id          String   @id @default(cuid())
+  feedId      String?
+  found       Int      @default(0)
+  created     Int      @default(0)
+  rewritten   Int      @default(0)
+  published   Int      @default(0)
+  errors      Int      @default(0)
+  message     String   @default("")
+  createdAt   DateTime @default(now())
+}
