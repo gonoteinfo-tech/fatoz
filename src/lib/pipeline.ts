@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { fetchFeed } from "./rss";
+import { fetchFeed, fetchOgImage } from "./rss";
 import { rewriteArticle } from "./ai";
 import { getSettings } from "./settings";
 import { uniqueSlug } from "./seo";
@@ -33,6 +33,10 @@ export async function importFeed(feedId: string): Promise<number> {
     const exists = await prisma.article.findUnique({ where: { sourceUrl: item.link } });
     if (exists) continue;
 
+    // Imagem: usa a do RSS; se faltar, busca o og:image da página original.
+    let imageUrl = item.imageUrl;
+    if (!imageUrl) imageUrl = await fetchOgImage(item.link);
+
     await prisma.article.create({
       data: {
         feedId: feed.id,
@@ -42,7 +46,7 @@ export async function importFeed(feedId: string): Promise<number> {
         title: item.title,
         slug: await uniqueSlug(item.title),
         excerpt: item.contentSnippet,
-        imageUrl: item.imageUrl,
+        imageUrl,
         category: feed.category,
         status: "PENDING",
         publishedAt: item.publishedAt ?? null,
@@ -53,6 +57,27 @@ export async function importFeed(feedId: string): Promise<number> {
 
   await prisma.feed.update({ where: { id: feed.id }, data: { lastFetched: new Date() } });
   return created;
+}
+
+// Preenche imagens que faltam em artigos já existentes (busca og:image da fonte).
+export async function backfillImages(limit = 30): Promise<{ checked: number; fixed: number }> {
+  const articles = await prisma.article.findMany({
+    where: { imageUrl: null, sourceUrl: { not: null } },
+    orderBy: { createdAt: "desc" },
+    take: Math.min(Math.max(1, limit), 100),
+    select: { id: true, sourceUrl: true },
+  });
+
+  let fixed = 0;
+  for (const a of articles) {
+    if (!a.sourceUrl) continue;
+    const img = await fetchOgImage(a.sourceUrl);
+    if (img) {
+      await prisma.article.update({ where: { id: a.id }, data: { imageUrl: img } });
+      fixed++;
+    }
+  }
+  return { checked: articles.length, fixed };
 }
 
 // Reescreve um único artigo com IA.
