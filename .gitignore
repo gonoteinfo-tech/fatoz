@@ -12,3 +12,7 @@ prisma/prod.db-journal
 *.db
 next-env.d.ts
 .DS_Store
+
+# modelos de ambiente (podem conter segredos) — fora do git
+.env.example
+.env.production.example
