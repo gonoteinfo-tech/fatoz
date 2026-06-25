@@ -6,6 +6,13 @@ const { createServer } = require("http");
 const fs = require("fs");
 const path = require("path");
 
+// Garante o carregamento do .env (servidor customizado nem sempre carrega sozinho).
+try {
+  require("@next/env").loadEnvConfig(__dirname, false);
+} catch (e) {
+  console.warn("[fatoz] aviso ao carregar .env:", e.message);
+}
+
 // A Hostinger/Passenger injeta a porta (ou um socket) em PORT. Não fixe a porta.
 const port = process.env.PORT || 3000;
 
