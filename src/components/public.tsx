@@ -16,13 +16,12 @@ export async function PublicHeader({ siteName, categories }: { siteName: string;
 
   return (
     <header className="sticky top-0 z-30 bg-white shadow-sm">
-      {/* Barra superior laranja */}
-      <div className="bg-gradient-to-r from-brand-600 to-brand-500 text-white">
+      {/* Barra superior (gradiente: cor principal -> secundária) */}
+      <div className="bg-gradient-to-r from-brand-600 to-accent-500 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 text-xs">
           <span className="hidden capitalize sm:inline">{today}</span>
           <div className="flex items-center gap-4">
             <Link href="/feed.xml" className="hover:underline">RSS</Link>
-            <Link href="/admin" className="font-semibold hover:underline">Painel</Link>
           </div>
         </div>
       </div>
@@ -54,12 +53,6 @@ export async function PublicHeader({ siteName, categories }: { siteName: string;
                 <span className="text-2xl font-black tracking-tight text-slate-900">{siteName}</span>
               </>
             )}
-          </Link>
-          <Link
-            href="/admin"
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-700"
-          >
-            Acessar painel
           </Link>
         </div>
       </div>

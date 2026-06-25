@@ -15,7 +15,30 @@
   --brand-700: 194 65 12;
   --brand-800: 154 52 18;
   --brand-900: 124 45 18;
+  /* Cor secundária (gradientes) — padrão igual à primária */
+  --accent-50: 255 247 237;
+  --accent-100: 255 237 213;
+  --accent-200: 254 215 170;
+  --accent-300: 253 186 116;
+  --accent-400: 251 146 60;
+  --accent-500: 249 115 22;
+  --accent-600: 234 88 12;
+  --accent-700: 194 65 12;
+  --accent-800: 154 52 18;
+  --accent-900: 124 45 18;
 }
+
+/* ====== Animações do widget de clima (sidebar) ====== */
+@keyframes wx-spin { to { transform: rotate(360deg); } }
+@keyframes wx-rain { 0% { transform: translateY(-2px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+@keyframes wx-float { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+@keyframes wx-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+.wx-sun { animation: wx-spin 18s linear infinite; transform-origin: center; }
+.wx-cloud { animation: wx-float 5s ease-in-out infinite; }
+.wx-drop { animation: wx-rain 1.3s linear infinite; }
+.wx-drop:nth-child(2) { animation-delay: 0.4s; }
+.wx-drop:nth-child(3) { animation-delay: 0.8s; }
+.wx-bolt { animation: wx-pulse 1.6s ease-in-out infinite; }
 
 body {
   @apply bg-slate-50 text-slate-900 antialiased;

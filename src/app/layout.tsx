@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { getSettings } from "@/lib/settings";
 import { themeCss } from "@/lib/theme";
@@ -66,11 +67,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="pt-BR" className={inter.variable}>
       <head>
         {s.favicon && <link rel="icon" href={s.favicon} />}
-        <style dangerouslySetInnerHTML={{ __html: themeCss(s.themeColor) }} />
+        <style dangerouslySetInnerHTML={{ __html: themeCss(s.themeColor, s.themeColorSecondary) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd(s, base)) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd(s, base)) }} />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        {s.googleAnalyticsId && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${s.googleAnalyticsId}`} strategy="afterInteractive" />
+            <Script id="ga4" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${s.googleAnalyticsId}');`}
+            </Script>
+          </>
+        )}
+      </body>
     </html>
   );
 }

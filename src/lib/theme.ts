@@ -49,11 +49,16 @@ export const THEME_PRESETS: Record<ThemeKey, { label: string; swatch: string; pa
   },
 };
 
-// Gera o conteúdo de :root com as variáveis --brand-* do tema escolhido.
-export function themeCss(key: string): string {
-  const preset = THEME_PRESETS[(key as ThemeKey)] ?? THEME_PRESETS.orange;
-  const vars = Object.entries(preset.palette)
+// Gera o conteúdo de :root com as variáveis --brand-* (primária) e --accent-*
+// (secundária, para gradientes). Se a secundária for vazia, usa a primária.
+export function themeCss(primaryKey: string, secondaryKey?: string): string {
+  const primary = THEME_PRESETS[(primaryKey as ThemeKey)] ?? THEME_PRESETS.orange;
+  const secondary = THEME_PRESETS[(secondaryKey as ThemeKey)] ?? primary;
+  const brandVars = Object.entries(primary.palette)
     .map(([k, v]) => `--brand-${k}:${v};`)
     .join("");
-  return `:root{${vars}}`;
+  const accentVars = Object.entries(secondary.palette)
+    .map(([k, v]) => `--accent-${k}:${v};`)
+    .join("");
+  return `:root{${brandVars}${accentVars}}`;
 }

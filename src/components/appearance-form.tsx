@@ -95,7 +95,7 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
 
   return (
     <div className="space-y-6">
-      {/* Cor principal do tema */}
+      {/* Cores do tema */}
       <div className={card}>
         <h3 className="mb-1 font-bold">Cor principal do tema</h3>
         <p className="mb-4 text-sm text-slate-500">Define a cor de destaque usada em botões, links e detalhes do site.</p>
@@ -119,6 +119,44 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
             );
           })}
         </div>
+
+        <h3 className="mb-1 mt-6 font-bold">Cor secundária (gradientes)</h3>
+        <p className="mb-3 text-sm text-slate-500">Usada nos gradientes (barra superior, clima, destaques). Deixe em "Igual à principal" para um tom único.</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => set("themeColorSecondary", "")}
+            className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+              !form.themeColorSecondary ? "border-slate-800 ring-2 ring-slate-800/10" : "border-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            Igual à principal
+          </button>
+          {(Object.keys(THEME_PRESETS) as ThemeKey[]).map((key) => {
+            const preset = THEME_PRESETS[key];
+            const active = form.themeColorSecondary === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => set("themeColorSecondary", key)}
+                aria-label={preset.label}
+                title={preset.label}
+                className={`h-9 w-9 rounded-full border-2 transition ${active ? "border-slate-800 ring-2 ring-slate-800/10" : "border-white shadow"}`}
+                style={{ background: preset.swatch }}
+              />
+            );
+          })}
+        </div>
+        {/* Prévia do gradiente */}
+        <div
+          className="mt-4 h-10 rounded-lg"
+          style={{
+            background: `linear-gradient(to right, ${THEME_PRESETS[(form.themeColor as ThemeKey)]?.swatch || "#ea580c"}, ${
+              THEME_PRESETS[(form.themeColorSecondary as ThemeKey)]?.swatch || THEME_PRESETS[(form.themeColor as ThemeKey)]?.swatch || "#ea580c"
+            })`,
+          }}
+        />
       </div>
 
       {/* Logo e favicon */}
@@ -395,6 +433,16 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
           <div>
             <label className="text-sm font-medium text-slate-700">Código do Google Search Console</label>
             <input value={form.googleVerification} onChange={(e) => set("googleVerification", e.target.value)} className={input} placeholder="conteúdo da meta google-site-verification" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-700">Google Analytics (ID de medição)</label>
+            <input value={form.googleAnalyticsId} onChange={(e) => set("googleAnalyticsId", e.target.value)} className={input} placeholder="G-XXXXXXXXXX" />
+            <p className="mt-1 text-xs text-slate-400">GA4 — começa com "G-". O script é injetado automaticamente.</p>
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-700">Google AdSense (client ID)</label>
+            <input value={form.adsenseClient} onChange={(e) => set("adsenseClient", e.target.value)} className={input} placeholder="ca-pub-0000000000000000" />
+            <p className="mt-1 text-xs text-slate-400">Opcional. Os espaços de anúncio já aparecem na sidebar das notícias.</p>
           </div>
         </div>
         <div className="mt-4">

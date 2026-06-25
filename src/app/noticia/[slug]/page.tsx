@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { PublicHeader, PublicFooter, ArticleCard, Breadcrumbs } from "@/components/public";
+import { NewsSidebar } from "@/components/news-sidebar";
 import { readingTime, baseUrlFrom, wordCount, organizationLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -112,7 +113,9 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
-      <main className="mx-auto max-w-3xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="min-w-0 lg:col-span-2">
         <Breadcrumbs
           items={[
             { label: "Início", href: "/" },
@@ -184,6 +187,13 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             </div>
           </section>
         )}
+          </div>
+
+          {/* Sidebar: clima animado, anúncios e mais lidas */}
+          <div className="lg:col-span-1">
+            <NewsSidebar excludeId={article.id} category={article.category} />
+          </div>
+        </div>
       </main>
 
       <PublicFooter siteName={settings.siteName} />

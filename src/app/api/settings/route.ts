@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     "siteName", "siteDescription", "wpEnabled", "wpUrl", "wpUser", "wpAppPassword",
     "apiFootballKey", "copaLeagueId", "copaSeason",
     "siteUrl", "ogImage", "twitterHandle", "googleVerification", "publisherName",
-    "siteTagline", "themeColor", "heroImage", "heroTitle", "heroSubtitle", "heroLink", "menuLinks",
+    "siteTagline", "themeColor", "themeColorSecondary", "googleAnalyticsId", "adsenseClient",
+    "heroImage", "heroTitle", "heroSubtitle", "heroLink", "menuLinks",
     "logo", "logoDark", "logoHeight", "logoMaxWidth", "logoFit", "favicon", "footerText", "contactEmail",
     "socialInstagram", "socialFacebook", "socialTwitter", "socialYoutube",
   ];

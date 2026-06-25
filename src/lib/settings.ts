@@ -22,6 +22,9 @@ export interface AppSettings {
   siteDescription: string;
   siteTagline: string;
   themeColor: string; // preset de cor (orange, blue, green, ...)
+  themeColorSecondary: string; // cor secundária para gradientes
+  googleAnalyticsId: string; // ex.: G-XXXXXXXXXX
+  adsenseClient: string; // ex.: ca-pub-0000000000000000 (opcional)
   heroImage: string; // banner/capa da home (data URL ou URL)
   heroTitle: string;
   heroSubtitle: string;
@@ -79,6 +82,9 @@ const DEFAULTS: AppSettings = {
   siteDescription: "Notícias automáticas, originais e otimizadas para SEO.",
   siteTagline: "",
   themeColor: "orange",
+  themeColorSecondary: "",
+  googleAnalyticsId: "",
+  adsenseClient: "",
   heroImage: "",
   heroTitle: "",
   heroSubtitle: "",
