@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { publishToWordPress } from "@/lib/wordpress";
+import { pingIndexNow } from "@/lib/indexnow";
 
 export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   if (!getSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
@@ -34,6 +35,8 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     where: { id: params.id },
     data: { status: "PUBLISHED", publishedAt: article.publishedAt ?? new Date(), wpPostId, wpUrl },
   });
+
+  await pingIndexNow([`/noticia/${article.slug}`]);
 
   return NextResponse.json({ ok: true });
 }

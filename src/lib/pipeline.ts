@@ -4,6 +4,7 @@ import { rewriteArticle } from "./ai";
 import { getSettings } from "./settings";
 import { uniqueSlug } from "./seo";
 import { publishToWordPress } from "./wordpress";
+import { pingIndexNow } from "./indexnow";
 
 interface PipelineResult {
   found: number;
@@ -139,6 +140,9 @@ export async function rewriteOne(articleId: string, forcePublish = false): Promi
         errorMessage: null,
       },
     });
+
+    // Notifica os buscadores (IndexNow) quando a notícia é publicada.
+    if (autoPublish) await pingIndexNow([`/noticia/${article.slug}`]);
   } catch (e: any) {
     await prisma.article.update({
       where: { id: articleId },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { pingIndexNow } from "@/lib/indexnow";
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   if (!getSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
@@ -20,6 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   try {
     const article = await prisma.article.update({ where: { id: params.id }, data });
+    if (data.status === "PUBLISHED") await pingIndexNow([`/noticia/${article.slug}`]);
     return NextResponse.json({ ok: true, article });
   } catch (e: any) {
     return NextResponse.json({ error: e.message || "Erro ao salvar." }, { status: 400 });

@@ -60,6 +60,7 @@ export interface AppSettings {
   twitterHandle: string; // ex.: @fatoz
   googleVerification: string; // código do Google Search Console
   publisherName: string; // nome do veículo (publisher) nos dados estruturados
+  indexNowKey: string; // chave IndexNow (gerada automaticamente)
 }
 
 const DEFAULTS: AppSettings = {
@@ -68,6 +69,7 @@ const DEFAULTS: AppSettings = {
   twitterHandle: "",
   googleVerification: "",
   publisherName: "",
+  indexNowKey: "",
   aiProvider: "gemini",
   claudeApiKey: "",
   claudeModel: "claude-opus-4-8",
