@@ -15,7 +15,7 @@ export async function PublicHeader({ siteName, categories }: { siteName: string;
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-white shadow-sm">
+    <header className="relative z-30 bg-white shadow-sm">
       {/* Barra superior (gradiente: cor principal -> secundária) */}
       <div className="bg-gradient-to-r from-brand-600 to-accent-500 text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 text-xs">
