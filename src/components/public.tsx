@@ -4,8 +4,7 @@ import { MarketWeatherBar } from "./market-weather";
 import { getSettings } from "@/lib/settings";
 
 export async function PublicHeader({ siteName, categories }: { siteName: string; categories: string[] }) {
-  const today = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }).format(new Date());
-  const { logo, logoHeight, logoMaxWidth, logoFit, menuLinks } = await getSettings();
+  const { logo, logoHeight, logoMaxWidth, logoFit, menuLinks, headerBannerImage, headerBannerLink } = await getSettings();
   let customLinks: { label: string; url: string }[] = [];
   try {
     const parsed = JSON.parse(menuLinks || "[]");
@@ -14,20 +13,27 @@ export async function PublicHeader({ siteName, categories }: { siteName: string;
     /* ignora JSON inválido */
   }
 
+  // Banner do cabeçalho (1000x200), com link opcional
+  const banner = headerBannerImage ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={headerBannerImage} alt="Banner" className="mx-auto block h-auto w-full max-w-[1000px] rounded-lg" width={1000} height={200} />
+  ) : null;
+
   return (
     <header className="relative z-30 bg-white shadow-sm">
-      {/* Barra superior (gradiente: cor principal -> secundária) */}
-      <div className="bg-gradient-to-r from-brand-600 to-accent-500 text-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-1.5 text-xs">
-          <span className="hidden capitalize sm:inline">{today}</span>
-          <div className="flex items-center gap-4">
-            <Link href="/feed.xml" className="hover:underline">RSS</Link>
-          </div>
-        </div>
-      </div>
-
       {/* Cotações + previsão do tempo (dados reais) */}
       <MarketWeatherBar />
+
+      {/* Banner do cabeçalho (1000x200) */}
+      {banner && (
+        <div className="mx-auto max-w-6xl px-4 pt-4">
+          {headerBannerLink ? (
+            <a href={headerBannerLink} target="_blank" rel="noopener noreferrer sponsored">{banner}</a>
+          ) : (
+            banner
+          )}
+        </div>
+      )}
 
       {/* Logo */}
       <div className="mx-auto max-w-6xl px-4">

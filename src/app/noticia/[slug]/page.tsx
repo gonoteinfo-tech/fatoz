@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { PublicHeader, PublicFooter, ArticleCard, Breadcrumbs } from "@/components/public";
 import { NewsSidebar } from "@/components/news-sidebar";
+import { ShareButtons } from "@/components/share-buttons";
 import { readingTime, baseUrlFrom, wordCount, organizationLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -194,10 +195,18 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             />
           )}
 
+          <div className="mt-6 border-y border-slate-100 py-3">
+            <ShareButtons url={url} title={article.title} />
+          </div>
+
           <div
             className="article-body mt-8"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+
+          <div className="mt-8 rounded-xl bg-slate-50 p-4">
+            <ShareButtons url={url} title={article.title} />
+          </div>
 
           {faq.length > 0 && (
             <section className="mt-10 border-t border-slate-200 pt-8">

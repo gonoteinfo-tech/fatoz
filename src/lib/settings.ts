@@ -32,6 +32,8 @@ export interface AppSettings {
   menuLinks: string; // JSON: [{ label, url }]
   logo: string; // data URL ou URL da imagem
   logoDark: string; // versão para fundo escuro (rodapé)
+  headerBannerImage: string; // banner 1000x200 no cabeçalho (data URL ou URL)
+  headerBannerLink: string; // URL de direcionamento do banner
   logoHeight: string; // altura do logo no cabeçalho (px)
   logoMaxWidth: string; // largura máxima (px)
   logoFit: string; // contain | fill | cover (proporção)
@@ -104,6 +106,8 @@ const DEFAULTS: AppSettings = {
   menuLinks: "[]",
   logo: "",
   logoDark: "",
+  headerBannerImage: "",
+  headerBannerLink: "",
   logoHeight: "40",
   logoMaxWidth: "200",
   logoFit: "contain",

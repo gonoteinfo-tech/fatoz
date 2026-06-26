@@ -40,7 +40,7 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function onImage(key: "logo" | "logoDark" | "favicon" | "heroImage" | "ogImage", file?: File | null) {
+  async function onImage(key: "logo" | "logoDark" | "favicon" | "heroImage" | "ogImage" | "headerBannerImage", file?: File | null) {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       setMsg("Selecione um arquivo de imagem.");
@@ -317,6 +317,29 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
             <p className="mt-2 text-xs text-slate-400">A barra branca simula o cabeçalho do site.</p>
           </div>
         </div>
+      </div>
+
+      {/* Banner do cabeçalho (1000x200) */}
+      <div className={card}>
+        <h3 className="mb-1 font-bold">Banner do cabeçalho (1000×200)</h3>
+        <p className="mb-4 text-sm text-slate-500">Imagem de propaganda exibida no topo do site, com link de direcionamento opcional.</p>
+        <div className="flex flex-wrap items-center gap-4">
+          <input type="file" accept="image/*" onChange={(e) => onImage("headerBannerImage", e.target.files?.[0])} className="text-sm" />
+          {form.headerBannerImage && (
+            <button onClick={() => set("headerBannerImage", "")} className="text-xs text-red-600 hover:underline">
+              Remover banner
+            </button>
+          )}
+        </div>
+        {form.headerBannerImage && (
+          <div className="mt-4 overflow-hidden rounded-lg border border-slate-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={form.headerBannerImage} alt="banner do cabeçalho" className="mx-auto block h-auto w-full max-w-[1000px]" />
+          </div>
+        )}
+        <label className="mt-4 block text-sm font-medium text-slate-700">Link de direcionamento</label>
+        <input value={form.headerBannerLink} onChange={(e) => set("headerBannerLink", e.target.value)} className={input} placeholder="https://anunciante.com" />
+        <p className="mt-1 text-xs text-slate-400">Tamanho recomendado: 1000×200px. Deixe o link vazio para um banner sem clique.</p>
       </div>
 
       {/* Banner / capa da home */}
