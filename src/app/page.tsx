@@ -33,8 +33,8 @@ export default async function HomePage() {
     (x, y) => (byCategory.get(y)!.length - byCategory.get(x)!.length)
   );
 
-  // Destaque do topo: as 5 notícias mais recentes (qualquer categoria)
-  const hero = articles.slice(0, 5);
+  // Destaque do topo: as 6 notícias mais recentes (1 principal + 5 cards)
+  const hero = articles.slice(0, 6);
   const heroIds = new Set(hero.map((a) => a.slug));
 
   return (
@@ -58,7 +58,7 @@ export default async function HomePage() {
             <section className="mb-12">
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 {hero[0] && <ArticleCard a={hero[0]} featured />}
-                {hero.slice(1, 5).map((a) => (
+                {hero.slice(1, 6).map((a) => (
                   <ArticleCard key={a.slug} a={a} />
                 ))}
               </div>
