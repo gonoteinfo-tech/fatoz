@@ -469,6 +469,26 @@ export function AppearanceForm({ initial }: { initial: AppSettings }) {
         </div>
       </div>
 
+      {/* Autoria e páginas institucionais */}
+      <div className={card}>
+        <h3 className="mb-1 font-bold">Autoria e páginas (E-E-A-T)</h3>
+        <p className="mb-4 text-sm text-slate-500">Sinais de confiança que ajudam buscadores e IA a citarem o site.</p>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div>
+            <label className="text-sm font-medium text-slate-700">Autor / redação</label>
+            <input value={form.authorName} onChange={(e) => set("authorName", e.target.value)} className={input} placeholder="Redação fatoz" />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-700">Bio do autor</label>
+            <input value={form.authorBio} onChange={(e) => set("authorBio", e.target.value)} className={input} placeholder="Breve descrição da redação" />
+          </div>
+        </div>
+        <label className="mt-3 block text-sm font-medium text-slate-700">Texto da página "Sobre"</label>
+        <textarea value={form.aboutText} onChange={(e) => set("aboutText", e.target.value)} rows={4} className={input} placeholder="Deixe em branco para usar um texto padrão." />
+        <label className="mt-3 block text-sm font-medium text-slate-700">Texto da "Política editorial"</label>
+        <textarea value={form.editorialPolicyText} onChange={(e) => set("editorialPolicyText", e.target.value)} rows={4} className={input} placeholder="Deixe em branco para usar um texto padrão." />
+      </div>
+
       {/* Contato e redes sociais */}
       <div className={card}>
         <h3 className="mb-4 font-bold">Contato e redes sociais</h3>

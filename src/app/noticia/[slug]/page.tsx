@@ -74,6 +74,19 @@ export default async function ArticlePage({ params }: { params: { slug: string }
   const tags = article.tags.split(",").map((t) => t.trim()).filter(Boolean);
   const publisherName = settings.publisherName || settings.siteName;
   const publisherLogo = settings.ogImage || `${base}/fatoz-logo.svg`;
+  const authorName = settings.authorName || publisherName;
+
+  // TL;DR e FAQ (JSON salvos pela IA)
+  const safeParse = <T,>(s: string, fallback: T): T => {
+    try {
+      const v = JSON.parse(s || "");
+      return Array.isArray(v) ? (v as T) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+  const keyPoints = safeParse<string[]>(article.keyPoints, []);
+  const faq = safeParse<{ pergunta: string; resposta: string }[]>(article.faq, []);
 
   const newsLd = {
     "@context": "https://schema.org",
@@ -88,7 +101,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     keywords: article.keywords || tags.join(", "),
     wordCount: wordCount(article.content),
     inLanguage: "pt-BR",
-    author: { "@type": "Organization", name: publisherName, url: base },
+    author: { "@type": "Person", name: authorName, url: `${base}/sobre` },
     publisher: {
       "@type": "Organization",
       name: publisherName,
@@ -96,6 +109,19 @@ export default async function ArticlePage({ params }: { params: { slug: string }
     },
     ...(article.sourceUrl ? { isBasedOn: article.sourceUrl } : {}),
   };
+
+  const faqLd =
+    faq.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faq.map((f) => ({
+            "@type": "Question",
+            name: f.pergunta,
+            acceptedAnswer: { "@type": "Answer", text: f.resposta },
+          })),
+        }
+      : null;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -112,6 +138,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
       <PublicHeader siteName={settings.siteName} categories={[]} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -130,13 +157,29 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           </span>
           <h1 className="mt-3 text-3xl font-extrabold leading-tight md:text-4xl">{article.title}</h1>
           <p className="mt-3 text-lg text-slate-600">{article.excerpt}</p>
-          <div className="mt-4 flex items-center gap-3 text-sm text-slate-400">
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-400">
+            <span className="font-semibold text-slate-600">Por {authorName}</span>
+            <span>•</span>
             <span>{fmtDate(article.publishedAt)}</span>
             <span>•</span>
             <span>{readingTime(article.content)} min de leitura</span>
             <span>•</span>
             <span>{article.views} visualizações</span>
           </div>
+
+          {keyPoints.length > 0 && (
+            <div className="mt-6 rounded-xl border border-brand-100 bg-brand-50/60 p-5">
+              <p className="mb-2 text-xs font-black uppercase tracking-widest text-brand-700">Em resumo</p>
+              <ul className="space-y-1.5">
+                {keyPoints.map((p, i) => (
+                  <li key={i} className="flex gap-2 text-sm text-slate-700">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-600" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {article.imageUrl && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -155,6 +198,23 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             className="article-body mt-8"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+
+          {faq.length > 0 && (
+            <section className="mt-10 border-t border-slate-200 pt-8">
+              <h2 className="mb-4 text-xl font-extrabold">Perguntas frequentes</h2>
+              <div className="space-y-3">
+                {faq.map((f, i) => (
+                  <details key={i} className="group rounded-xl border border-slate-200 bg-white p-4 open:border-brand-200">
+                    <summary className="cursor-pointer list-none font-semibold text-slate-800 marker:hidden">
+                      <span className="text-brand-600">{"▸ "}</span>
+                      {f.pergunta}
+                    </summary>
+                    <p className="mt-2 text-slate-600">{f.resposta}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
 
           {tags.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-2">

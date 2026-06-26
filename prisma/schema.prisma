@@ -48,6 +48,10 @@ model Article {
   metaDescription String @default("")
   keywords        String @default("")
 
+  // GEO/AEO: resumo em tópicos (TL;DR) e perguntas frequentes — JSON
+  keyPoints       String @default("[]")
+  faq             String @default("[]")
+
   // Estado: PENDING | REWRITING | DRAFT | PUBLISHED | ERROR
   status        String   @default("PENDING")
   errorMessage  String?

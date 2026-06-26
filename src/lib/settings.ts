@@ -61,6 +61,12 @@ export interface AppSettings {
   googleVerification: string; // código do Google Search Console
   publisherName: string; // nome do veículo (publisher) nos dados estruturados
   indexNowKey: string; // chave IndexNow (gerada automaticamente)
+
+  // Autoria e páginas institucionais (E-E-A-T)
+  authorName: string; // autor/redação exibido nas matérias
+  authorBio: string; // breve biografia do autor
+  aboutText: string; // texto da página "Sobre"
+  editorialPolicyText: string; // texto da "Política editorial"
 }
 
 const DEFAULTS: AppSettings = {
@@ -70,6 +76,10 @@ const DEFAULTS: AppSettings = {
   googleVerification: "",
   publisherName: "",
   indexNowKey: "",
+  authorName: "Redação fatoz",
+  authorBio: "Equipe de redação do fatoz, dedicada a trazer notícias atualizadas e verificadas do Brasil e do mundo.",
+  aboutText: "",
+  editorialPolicyText: "",
   aiProvider: "gemini",
   claudeApiKey: "",
   claudeModel: "claude-opus-4-8",

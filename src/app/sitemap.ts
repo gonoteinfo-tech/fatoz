@@ -22,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/copa/onde-ver`, changeFrequency: "daily", priority: 0.7 },
     { url: `${base}/copa/tabela`, changeFrequency: "daily", priority: 0.7 },
     { url: `${base}/busca`, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${base}/sobre`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/politica-editorial`, changeFrequency: "monthly", priority: 0.3 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = cats.map((c) => ({

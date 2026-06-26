@@ -130,6 +130,8 @@ export async function rewriteOne(articleId: string, forcePublish = false): Promi
         metaDescription: result.metaDescription,
         keywords: result.keywords,
         tags: result.tags,
+        keyPoints: JSON.stringify(result.keyPoints || []),
+        faq: JSON.stringify(result.faq || []),
         // Mantém a categoria curada do feed; usa a sugestão da IA só quando genérica.
         category: article.category && article.category !== "Geral" ? article.category : result.category || "Geral",
         aiProvider: result.provider,

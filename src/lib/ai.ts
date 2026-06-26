@@ -7,6 +7,11 @@ export interface RewriteInput {
   category?: string;
 }
 
+export interface FaqItem {
+  pergunta: string;
+  resposta: string;
+}
+
 export interface RewriteResult {
   title: string;
   excerpt: string;
@@ -16,6 +21,8 @@ export interface RewriteResult {
   keywords: string;
   tags: string;
   category: string;
+  keyPoints: string[]; // resumo em tópicos (TL;DR)
+  faq: FaqItem[]; // perguntas frequentes
   provider: AiProvider;
 }
 
@@ -38,8 +45,13 @@ Responda APENAS com um objeto JSON válido (sem markdown, sem cercas de código)
   "metaDescription": "meta description SEO (max 155 caracteres)",
   "keywords": "palavra1, palavra2, palavra3",
   "tags": "tag1, tag2, tag3",
-  "category": "categoria sugerida"
+  "category": "categoria sugerida",
+  "keyPoints": ["ponto-chave 1 (frase curta)", "ponto-chave 2", "ponto-chave 3"],
+  "faq": [{"pergunta": "pergunta frequente sobre o tema?", "resposta": "resposta objetiva em 1-2 frases."}, {"pergunta": "outra pergunta?", "resposta": "resposta."}]
 }
+
+Para "keyPoints": 3 tópicos curtos resumindo o essencial da notícia (estilo "em resumo").
+Para "faq": 2 a 3 perguntas que um leitor faria sobre o tema, com respostas objetivas e factuais baseadas na notícia.
 
 NOTÍCIA ORIGINAL:
 Título: ${input.title}
@@ -129,6 +141,16 @@ export async function rewriteArticle(input: RewriteInput, s: AppSettings): Promi
   }
 
   const parsed = extractJson(raw);
+  const keyPoints = Array.isArray(parsed.keyPoints)
+    ? parsed.keyPoints.map((p: any) => String(p).trim()).filter(Boolean).slice(0, 5)
+    : [];
+  const faq: FaqItem[] = Array.isArray(parsed.faq)
+    ? parsed.faq
+        .filter((f: any) => f && f.pergunta && f.resposta)
+        .map((f: any) => ({ pergunta: String(f.pergunta).trim(), resposta: String(f.resposta).trim() }))
+        .slice(0, 5)
+    : [];
+
   return {
     title: String(parsed.title || input.title).trim(),
     excerpt: String(parsed.excerpt || "").trim(),
@@ -138,6 +160,8 @@ export async function rewriteArticle(input: RewriteInput, s: AppSettings): Promi
     keywords: String(parsed.keywords || "").trim(),
     tags: String(parsed.tags || "").trim(),
     category: String(parsed.category || input.category || "Geral").trim(),
+    keyPoints,
+    faq,
     provider: s.aiProvider,
   };
 }

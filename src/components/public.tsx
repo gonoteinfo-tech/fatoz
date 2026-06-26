@@ -148,7 +148,12 @@ export async function PublicFooter({ siteName }: { siteName: string }) {
             Contato: <a href={`mailto:${s.contactEmail}`} className="hover:text-white">{s.contactEmail}</a>
           </p>
         )}
-        <p className="mt-6 text-xs text-slate-500">
+        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-400">
+          <Link href="/sobre" className="hover:text-white">Sobre</Link>
+          <Link href="/politica-editorial" className="hover:text-white">Política editorial</Link>
+          <Link href="/feed.xml" className="hover:text-white">RSS</Link>
+        </div>
+        <p className="mt-4 text-xs text-slate-500">
           {s.footerText || `© ${new Date().getFullYear()} ${siteName}. Todos os direitos reservados.`}
         </p>
       </div>
