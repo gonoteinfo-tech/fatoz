@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { ActionButton, BatchPublishButton, BackfillImagesButton } from "@/components/admin-ui";
+import { ActionButton, BatchPublishButton, BackfillImagesButton, BackfillTldrButton } from "@/components/admin-ui";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +40,7 @@ export default async function ArticlesPage({ searchParams }: { searchParams: { s
           )}
         </h1>
         <div className="flex flex-wrap items-center gap-2">
+          <BackfillTldrButton />
           <BackfillImagesButton />
           <BatchPublishButton pendingCount={pendingCount} />
         </div>

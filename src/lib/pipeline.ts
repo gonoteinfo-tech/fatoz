@@ -1,6 +1,6 @@
 import { prisma } from "./db";
 import { fetchFeed, fetchOgImage } from "./rss";
-import { rewriteArticle } from "./ai";
+import { rewriteArticle, generateExtras } from "./ai";
 import { getSettings } from "./settings";
 import { uniqueSlug } from "./seo";
 import { publishToWordPress } from "./wordpress";
@@ -58,6 +58,39 @@ export async function importFeed(feedId: string): Promise<number> {
 
   await prisma.feed.update({ where: { id: feed.id }, data: { lastFetched: new Date() } });
   return created;
+}
+
+// Regenera TL;DR (keyPoints) e FAQ para notícias publicadas que ainda não têm.
+export async function backfillTldrFaq(limit = 20): Promise<{ checked: number; fixed: number; errors: number }> {
+  const settings = await getSettings();
+  const articles = await prisma.article.findMany({
+    where: {
+      status: "PUBLISHED",
+      content: { not: "" },
+      OR: [{ keyPoints: { in: ["", "[]"] } }, { faq: { in: ["", "[]"] } }],
+    },
+    orderBy: { publishedAt: "desc" },
+    take: Math.min(Math.max(1, limit), 50),
+    select: { id: true, title: true, content: true },
+  });
+
+  let fixed = 0;
+  let errors = 0;
+  for (const a of articles) {
+    try {
+      const extras = await generateExtras({ title: a.title, content: a.content }, settings);
+      if (extras.keyPoints.length || extras.faq.length) {
+        await prisma.article.update({
+          where: { id: a.id },
+          data: { keyPoints: JSON.stringify(extras.keyPoints), faq: JSON.stringify(extras.faq) },
+        });
+        fixed++;
+      }
+    } catch {
+      errors++;
+    }
+  }
+  return { checked: articles.length, fixed, errors };
 }
 
 // Preenche imagens que faltam em artigos já existentes (busca og:image da fonte).

@@ -141,6 +141,44 @@ export function BackfillImagesButton() {
   );
 }
 
+// Regenera TL;DR e FAQ (com IA) para as notícias antigas que não têm.
+export function BackfillTldrButton() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function run() {
+    setLoading(true);
+    setMsg("Gerando resumos e FAQ com IA...");
+    const res = await fetch("/api/articles/backfill-tldr", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ limit: 15 }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setLoading(false);
+    if (res.ok) {
+      setMsg(`✓ ${data.fixed} de ${data.checked} atualizados${data.errors ? `, ${data.errors} com erro` : ""}.`);
+      router.refresh();
+    } else {
+      setMsg(data.error || "Erro ao regenerar.");
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <button
+        onClick={run}
+        disabled={loading}
+        className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+      >
+        {loading ? "Gerando..." : "✨ Regenerar TL;DR/FAQ"}
+      </button>
+      {msg && <span className="text-sm text-slate-600">{msg}</span>}
+    </div>
+  );
+}
+
 // Botão genérico que chama uma API e atualiza a página
 export function ActionButton({
   url,

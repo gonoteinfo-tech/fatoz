@@ -125,20 +125,22 @@ async function callOpenAI(prompt: string, s: AppSettings): Promise<string> {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
-export async function rewriteArticle(input: RewriteInput, s: AppSettings): Promise<RewriteResult> {
-  const prompt = buildPrompt(input, s);
-  let raw = "";
-
+// Envia o prompt ao provedor de IA configurado.
+async function callAi(prompt: string, s: AppSettings): Promise<string> {
   if (s.aiProvider === "claude") {
     if (!s.claudeApiKey) throw new Error("Chave da API Claude não configurada.");
-    raw = await callClaude(prompt, s);
+    return callClaude(prompt, s);
   } else if (s.aiProvider === "openai") {
     if (!s.openaiApiKey) throw new Error("Chave da API OpenAI não configurada.");
-    raw = await callOpenAI(prompt, s);
-  } else {
-    if (!s.geminiApiKey) throw new Error("Chave da API Gemini não configurada.");
-    raw = await callGemini(prompt, s);
+    return callOpenAI(prompt, s);
   }
+  if (!s.geminiApiKey) throw new Error("Chave da API Gemini não configurada.");
+  return callGemini(prompt, s);
+}
+
+export async function rewriteArticle(input: RewriteInput, s: AppSettings): Promise<RewriteResult> {
+  const prompt = buildPrompt(input, s);
+  const raw = await callAi(prompt, s);
 
   const parsed = extractJson(raw);
   const keyPoints = Array.isArray(parsed.keyPoints)
@@ -164,6 +166,37 @@ export async function rewriteArticle(input: RewriteInput, s: AppSettings): Promi
     faq,
     provider: s.aiProvider,
   };
+}
+
+// Gera apenas o TL;DR (keyPoints) e o FAQ a partir de uma notícia já existente.
+// Mais barato que reescrever tudo — usado para preencher conteúdo antigo.
+export async function generateExtras(
+  input: { title: string; content: string },
+  s: AppSettings
+): Promise<{ keyPoints: string[]; faq: FaqItem[] }> {
+  const text = input.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 6000);
+  const prompt = `Com base na notícia abaixo, gere em ${s.rewriteLanguage}:
+- "keyPoints": 3 tópicos curtos resumindo o essencial (estilo "em resumo").
+- "faq": 2 a 3 perguntas frequentes que um leitor faria, com respostas objetivas e factuais baseadas na notícia.
+
+Responda APENAS com JSON válido (sem markdown):
+{"keyPoints":["...","...","..."],"faq":[{"pergunta":"...","resposta":"..."}]}
+
+TÍTULO: ${input.title}
+NOTÍCIA: ${text}`;
+
+  const raw = await callAi(prompt, s);
+  const parsed = extractJson(raw);
+  const keyPoints = Array.isArray(parsed.keyPoints)
+    ? parsed.keyPoints.map((p: any) => String(p).trim()).filter(Boolean).slice(0, 5)
+    : [];
+  const faq: FaqItem[] = Array.isArray(parsed.faq)
+    ? parsed.faq
+        .filter((f: any) => f && f.pergunta && f.resposta)
+        .map((f: any) => ({ pergunta: String(f.pergunta).trim(), resposta: String(f.resposta).trim() }))
+        .slice(0, 5)
+    : [];
+  return { keyPoints, faq };
 }
 
 // Testa a conexão com o provedor de IA selecionado
