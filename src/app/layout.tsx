@@ -67,6 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="pt-BR" className={inter.variable}>
       <head>
         {s.favicon && <link rel="icon" href={s.favicon} />}
+        {s.adsenseClient && <meta name="google-adsense-account" content={s.adsenseClient} />}
         <style dangerouslySetInnerHTML={{ __html: themeCss(s.themeColor, s.themeColorSecondary) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd(s, base)) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd(s, base)) }} />

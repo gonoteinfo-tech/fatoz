@@ -7,6 +7,7 @@ import {
   ArticleListItem,
   SectionHeader,
   HeroBanner,
+  TrendingBlock,
   type CardArticle,
 } from "@/components/public";
 import { CopaBar } from "@/components/copa-bar";
@@ -37,6 +38,12 @@ export default async function HomePage() {
   const hero = articles.slice(0, 6);
   const heroIds = new Set(hero.map((a) => a.slug));
 
+  // Em alta: as mais lidas (por visualizações), sem repetir o destaque
+  const trending = [...articles]
+    .sort((a, b) => b.views - a.views)
+    .filter((a) => !heroIds.has(a.slug) && a.views > 0)
+    .slice(0, 5);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <PublicHeader siteName={settings.siteName} categories={categories} />
@@ -63,6 +70,9 @@ export default async function HomePage() {
                 ))}
               </div>
             </section>
+
+            {/* EM ALTA */}
+            <TrendingBlock items={trending} />
 
             {/* SEÇÕES POR CATEGORIA */}
             {categories.map((cat) => {

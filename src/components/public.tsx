@@ -183,6 +183,42 @@ export function Breadcrumbs({ items }: { items: { label: string; href?: string }
   );
 }
 
+// Bloco "Em alta" — notícias mais lidas, em destaque numerado
+export function TrendingBlock({ items }: { items: CardArticle[] }) {
+  if (items.length === 0) return null;
+  return (
+    <section className="mb-12">
+      <div className="mb-4 flex items-center gap-2 border-b-2 border-slate-100 pb-2">
+        <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brand-600 to-accent-500 text-white">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
+            <path d="M12 2c.5 3-1.5 4.5-3 6-1.7 1.7-3 3.4-3 6a6 6 0 1012 0c0-2-1-3.5-2-5 .3 1.4-.2 2.6-1 3 .3-1.6-.4-3.4-1.5-4.6C12.4 6.2 13 4 12 2z" />
+          </svg>
+        </span>
+        <h2 className="text-xl font-black uppercase tracking-tight text-slate-900">
+          <span className="border-b-4 border-accent-500 pb-1">Em alta</span>
+        </h2>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {items.map((a, i) => (
+          <Link
+            key={a.slug}
+            href={`/noticia/${a.slug}`}
+            className="group flex gap-3 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-accent-300 hover:shadow-sm"
+          >
+            <span className="text-3xl font-black leading-none text-accent-500">{i + 1}</span>
+            <div className="min-w-0">
+              <span className="text-[11px] font-bold uppercase tracking-wide text-brand-600">{a.category}</span>
+              <h3 className="mt-0.5 line-clamp-3 text-sm font-bold leading-snug text-slate-800 group-hover:text-brand-700">
+                {a.title}
+              </h3>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // Banner/capa da home (exibido quando configurado em Aparência)
 export function HeroBanner({
   image,
