@@ -55,8 +55,23 @@ export async function getCopaStandings(): Promise<{
   return { source: "static", standings: computeStandings(COPA_MATCHES) };
 }
 
-// Próximos jogos para o ticker da barra (os 6 primeiros).
+// Jogos para o ticker da barra: mostra os PRÓXIMOS e os ao vivo (não os já
+// disputados). Se a fase acabou, mostra os últimos resultados.
 export async function getCopaTicker(): Promise<CopaMatch[]> {
   const { matches } = await getCopaMatches();
+  const withIso = matches.filter((m) => m.iso);
+
+  if (withIso.length) {
+    const now = Date.now();
+    // "ao vivo" = começou há até 2h30; "próximos" = a partir de agora
+    const upcoming = withIso
+      .filter((m) => new Date(m.iso!).getTime() >= now - 2.5 * 3600 * 1000)
+      .sort((a, b) => new Date(a.iso!).getTime() - new Date(b.iso!).getTime());
+    if (upcoming.length) return upcoming.slice(0, 8);
+    // torneio/rodada encerrada: mostra os últimos jogos (mais recentes primeiro)
+    return withIso.sort((a, b) => new Date(b.iso!).getTime() - new Date(a.iso!).getTime()).slice(0, 8);
+  }
+
+  // fallback estático (sem API): mantém a lista de exemplo
   return matches.slice(0, 6);
 }

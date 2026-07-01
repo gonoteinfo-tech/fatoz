@@ -87,6 +87,7 @@ export async function fetchApiFixtures(): Promise<CopaMatch[]> {
       channels: [],
       homeScore: finished ? f.goals.home ?? undefined : undefined,
       awayScore: finished ? f.goals.away ?? undefined : undefined,
+      iso: f.fixture.date,
     };
   });
 }

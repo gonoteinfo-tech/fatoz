@@ -20,6 +20,7 @@ export interface CopaMatch {
   channels: string[]; // onde assistir
   homeScore?: number; // placar (preencha quando o jogo terminar)
   awayScore?: number;
+  iso?: string; // data/hora real do jogo (ISO) — usada para ordenar/filtrar
 }
 
 export interface TeamStanding {
