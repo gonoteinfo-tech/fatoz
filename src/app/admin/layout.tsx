@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/feeds", label: "Feeds RSS", icon: "📡" },
   { href: "/admin/artigos", label: "Artigos", icon: "📰" },
   { href: "/admin/aparencia", label: "Aparência", icon: "🎨" },
+  { href: "/admin/publicidade", label: "Publicidade", icon: "📢" },
   { href: "/admin/configuracoes", label: "Configurações", icon: "⚙️" },
 ];
 

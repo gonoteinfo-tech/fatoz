@@ -34,6 +34,18 @@ export interface AppSettings {
   logoDark: string; // versão para fundo escuro (rodapé)
   headerBannerImage: string; // banner 1000x200 no cabeçalho (data URL ou URL)
   headerBannerLink: string; // URL de direcionamento do banner
+  headerBannerCode: string; // código de anúncio no lugar do banner
+
+  // Espaços de publicidade (código HTML/JS OU imagem+link). Código tem prioridade.
+  adSidebarTopCode: string;
+  adSidebarTopImage: string;
+  adSidebarTopLink: string;
+  adSidebarBottomCode: string;
+  adSidebarBottomImage: string;
+  adSidebarBottomLink: string;
+  adArticleCode: string;
+  adArticleImage: string;
+  adArticleLink: string;
   logoHeight: string; // altura do logo no cabeçalho (px)
   logoMaxWidth: string; // largura máxima (px)
   logoFit: string; // contain | fill | cover (proporção)
@@ -108,6 +120,16 @@ const DEFAULTS: AppSettings = {
   logoDark: "",
   headerBannerImage: "",
   headerBannerLink: "",
+  headerBannerCode: "",
+  adSidebarTopCode: "",
+  adSidebarTopImage: "",
+  adSidebarTopLink: "",
+  adSidebarBottomCode: "",
+  adSidebarBottomImage: "",
+  adSidebarBottomLink: "",
+  adArticleCode: "",
+  adArticleImage: "",
+  adArticleLink: "",
   logoHeight: "40",
   logoMaxWidth: "200",
   logoFit: "contain",

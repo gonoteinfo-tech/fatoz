@@ -16,7 +16,10 @@ export async function POST(req: NextRequest) {
     "siteTagline", "themeColor", "themeColorSecondary", "googleAnalyticsId", "adsenseClient",
     "heroImage", "heroTitle", "heroSubtitle", "heroLink", "menuLinks",
     "logo", "logoDark", "logoHeight", "logoMaxWidth", "logoFit", "favicon", "footerText", "contactEmail",
-    "headerBannerImage", "headerBannerLink",
+    "headerBannerImage", "headerBannerLink", "headerBannerCode",
+    "adSidebarTopCode", "adSidebarTopImage", "adSidebarTopLink",
+    "adSidebarBottomCode", "adSidebarBottomImage", "adSidebarBottomLink",
+    "adArticleCode", "adArticleImage", "adArticleLink",
     "socialInstagram", "socialFacebook", "socialTwitter", "socialYoutube",
   ];
   const data: Record<string, string> = {};

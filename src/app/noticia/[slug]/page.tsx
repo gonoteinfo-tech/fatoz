@@ -3,6 +3,7 @@ import { getSettings } from "@/lib/settings";
 import { PublicHeader, PublicFooter, ArticleCard, Breadcrumbs } from "@/components/public";
 import { NewsSidebar } from "@/components/news-sidebar";
 import { ShareButtons } from "@/components/share-buttons";
+import { AdSlot } from "@/components/ad-slot";
 import { readingTime, baseUrlFrom, wordCount, organizationLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -202,6 +203,14 @@ export default async function ArticlePage({ params }: { params: { slug: string }
           <div
             className="article-body mt-8"
             dangerouslySetInnerHTML={{ __html: article.content }}
+          />
+
+          {/* Publicidade dentro da matéria */}
+          <AdSlot
+            code={settings.adArticleCode}
+            image={settings.adArticleImage}
+            link={settings.adArticleLink}
+            className="my-8 flex justify-center"
           />
 
           <div className="mt-8 rounded-xl bg-slate-50 p-4">

@@ -2,9 +2,11 @@ import Link from "next/link";
 import { CategoryIcon } from "./category-icon";
 import { MarketWeatherBar } from "./market-weather";
 import { getSettings } from "@/lib/settings";
+import { AdSlot } from "./ad-slot";
 
 export async function PublicHeader({ siteName, categories }: { siteName: string; categories: string[] }) {
-  const { logo, logoHeight, logoMaxWidth, logoFit, menuLinks, headerBannerImage, headerBannerLink } = await getSettings();
+  const s = await getSettings();
+  const { logo, logoHeight, logoMaxWidth, logoFit, menuLinks } = s;
   let customLinks: { label: string; url: string }[] = [];
   try {
     const parsed = JSON.parse(menuLinks || "[]");
@@ -13,25 +15,22 @@ export async function PublicHeader({ siteName, categories }: { siteName: string;
     /* ignora JSON inválido */
   }
 
-  // Banner do cabeçalho (1000x200), com link opcional
-  const banner = headerBannerImage ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={headerBannerImage} alt="Banner" className="mx-auto block h-auto w-full max-w-[1000px] rounded-lg" width={1000} height={200} />
-  ) : null;
+  const hasHeaderBanner = s.headerBannerCode || s.headerBannerImage;
 
   return (
     <header className="relative z-30 bg-white shadow-sm">
       {/* Cotações + previsão do tempo (dados reais) */}
       <MarketWeatherBar />
 
-      {/* Banner do cabeçalho (1000x200) */}
-      {banner && (
+      {/* Banner do cabeçalho (1000x200) — código ou imagem */}
+      {hasHeaderBanner && (
         <div className="mx-auto max-w-6xl px-4 pt-4">
-          {headerBannerLink ? (
-            <a href={headerBannerLink} target="_blank" rel="noopener noreferrer sponsored">{banner}</a>
-          ) : (
-            banner
-          )}
+          <AdSlot
+            code={s.headerBannerCode}
+            image={s.headerBannerImage}
+            link={s.headerBannerLink}
+            className="mx-auto max-w-[1000px] text-center"
+          />
         </div>
       )}
 

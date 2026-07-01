@@ -1,32 +1,26 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 import { WeatherWidget } from "./weather-widget";
-
-function AdSlot({ label, height = "h-64" }: { label: string; height?: string }) {
-  return (
-    <div className={`grid ${height} place-items-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center`}>
-      <div className="text-slate-400">
-        <p className="text-[10px] font-bold uppercase tracking-widest">Publicidade</p>
-        <p className="mt-1 text-xs">{label}</p>
-      </div>
-    </div>
-  );
-}
+import { AdSlot } from "./ad-slot";
 
 export async function NewsSidebar({ excludeId }: { excludeId?: string; category?: string }) {
-  const popular = await prisma.article.findMany({
-    where: { status: "PUBLISHED", ...(excludeId ? { NOT: { id: excludeId } } : {}) },
-    orderBy: { views: "desc" },
-    take: 5,
-  });
+  const [settings, popular] = await Promise.all([
+    getSettings(),
+    prisma.article.findMany({
+      where: { status: "PUBLISHED", ...(excludeId ? { NOT: { id: excludeId } } : {}) },
+      orderBy: { views: "desc" },
+      take: 5,
+    }),
+  ]);
 
   return (
     <aside className="space-y-6 lg:sticky lg:top-6">
       {/* Widget de tempo interativo (busca de cidade + detalhes) */}
       <WeatherWidget />
 
-      {/* Anúncio (retângulo médio) */}
-      <AdSlot label="300×250" />
+      {/* Publicidade — retângulo (300×250) */}
+      <AdSlot code={settings.adSidebarTopCode} image={settings.adSidebarTopImage} link={settings.adSidebarTopLink} />
 
       {/* Mais lidas */}
       {popular.length > 0 && (
@@ -47,8 +41,8 @@ export async function NewsSidebar({ excludeId }: { excludeId?: string; category?
         </div>
       )}
 
-      {/* Anúncio (meia página / sticky) */}
-      <AdSlot label="300×600" height="h-96" />
+      {/* Publicidade — meia página (300×600) */}
+      <AdSlot code={settings.adSidebarBottomCode} image={settings.adSidebarBottomImage} link={settings.adSidebarBottomLink} />
     </aside>
   );
 }
